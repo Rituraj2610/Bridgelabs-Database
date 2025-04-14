@@ -54,6 +54,20 @@ public class AddressBook {
         System.out.println("Person not found.");
     }
 
+    public void printContacts() {
+        contacts.forEach(System.out::println);
+    }
+    public List<Person> searchByCity(String city) {
+        // UC7: Search person by city
+        return contacts.stream().filter(p -> p.getAddress().getCity().equalsIgnoreCase(city)).collect(Collectors.toList());
+    }
+
+    public List<Person> searchByState(String state) {
+        // UC7: Search person by state
+        return contacts.stream().filter(p -> p.getAddress().getState().equalsIgnoreCase(state)).collect(Collectors.toList());
+    }
+
+
 
 
 }

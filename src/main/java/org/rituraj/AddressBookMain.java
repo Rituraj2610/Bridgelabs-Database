@@ -45,6 +45,9 @@ public class AddressBookMain {
                 case 2 -> addContact();
                 case 3 -> editContact();
                 case 4 -> deleteContact();
+                case 5 -> printContacts();
+                case 6 -> searchByCity();
+                case 7 -> searchByState();
                 case 0 -> {
                     System.out.println("Exiting...");
                     return;
@@ -124,6 +127,37 @@ public class AddressBookMain {
                 System.out.println("Not found.");
             }
         }
+    }
+
+      private void printContacts() {
+        for (String bookName : bookMap.keySet()) {
+            System.out.println("\n--- " + bookName + " ---");
+            bookMap.get(bookName).printContacts();
+        }
+    }
+
+    private void searchByCity() {
+        System.out.print("City: ");
+        String city = sc.nextLine();
+        bookMap.values().forEach(book -> {
+            List<Person> list = book.searchByCity(city);
+            if (!list.isEmpty()) {
+                System.out.println("In book: " + book);
+                list.forEach(System.out::println);
+            }
+        });
+    }
+
+    private void searchByState() {
+        System.out.print("State: ");
+        String state = sc.nextLine();
+        bookMap.values().forEach(book -> {
+            List<Person> list = book.searchByState(state);
+            if (!list.isEmpty()) {
+                System.out.println("In book: " + book);
+                list.forEach(System.out::println);
+            }
+        });
     }
 
 
