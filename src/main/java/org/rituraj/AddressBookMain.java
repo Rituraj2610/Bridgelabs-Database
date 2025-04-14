@@ -42,6 +42,7 @@ public class AddressBookMain {
             switch (choice) {
                 case 1 -> addAddressBook();
                 case 2 -> addContact();
+                case 3 -> editContact();
                 case 0 -> {
                     System.out.println("Exiting...");
                     return;
@@ -95,5 +96,17 @@ public class AddressBookMain {
             System.out.println("Duplicate contact!");
         }
     }
+
+    private void editContact() {
+        System.out.print("Enter AddressBook name: ");
+        String name = sc.nextLine();
+        AddressBook book = bookMap.get(name);
+        if (book != null) {
+            System.out.print("Enter first name of person to edit: ");
+            book.editPerson(sc.nextLine(), sc);
+        }
+    }
+
+
 
 }

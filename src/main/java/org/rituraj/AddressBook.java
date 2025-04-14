@@ -31,6 +31,23 @@ public class AddressBook {
         return true;
     }
 
+    public void editPerson(String firstName, Scanner sc) {
+        // UC2: Edit person by name
+        for (Person p : contacts) {
+            if (p.getFirstName().equalsIgnoreCase(firstName)) {
+                System.out.print("New last name: ");
+                p.setLastName(sc.nextLine());
+                System.out.print("New phone: ");
+                p.setPhone(sc.nextLine());
+                System.out.print("New email: ");
+                p.setEmail(sc.nextLine());
+                return;
+            }
+        }
+        System.out.println("Person not found.");
+    }
+
+
 
 }
 
