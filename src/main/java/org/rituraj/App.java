@@ -61,7 +61,9 @@ public class App {
 //            crud.createTablePayrollDetails(con);
             crud.insertDataPayrollDetails(con);
 
-
+            //UC12
+            crud.deleteEmployee(con, 1);
+            crud.readDataUpdated(con);
 
             }catch(SQLException e){
             e.printStackTrace();

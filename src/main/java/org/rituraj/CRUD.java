@@ -149,4 +149,28 @@ public class CRUD {
         }
 
     }
+
+    public void deleteEmployee(Connection con, int id) throws SQLException {
+        String query = "UPDATE employee_payroll set is_active=? where id=?";
+        PreparedStatement preparedStatement = con.prepareStatement(query);
+        preparedStatement.setInt(2, id);
+        preparedStatement.setBoolean(1, false);
+        preparedStatement.executeUpdate();
+    }
+
+    public void readDataUpdated(Connection con) throws SQLException {
+        List<Employee> list = new ArrayList<>();
+        String sql = "SELECT * FROM employee_payroll where is_active=true";
+        Statement st = con.createStatement();
+        ResultSet set =  st.executeQuery(sql);
+        while(set.next()){
+            Employee employee = new Employee(set.getInt(1), set.getString(2), set.getDouble(3), set.getDate(4));
+            list.add(employee);
+        }
+
+        for(Employee e : list){
+            System.out.println(e);
+        }
+
+    }
 }
