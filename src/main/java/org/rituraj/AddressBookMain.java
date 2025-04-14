@@ -48,6 +48,7 @@ public class AddressBookMain {
                 case 5 -> printContacts();
                 case 6 -> searchByCity();
                 case 7 -> searchByState();
+                case 8 -> countByCityState();
                 case 0 -> {
                     System.out.println("Exiting...");
                     return;
@@ -160,5 +161,13 @@ public class AddressBookMain {
         });
     }
 
+    private void countByCityState() {
+        System.out.print("City or State: ");
+        String val = sc.nextLine();
+        long count = bookMap.values().stream()
+                .mapToLong(book -> book.countByCity(val) + book.countByState(val))
+                .sum();
+        System.out.println("Count: " + count);
+    }
 
 }

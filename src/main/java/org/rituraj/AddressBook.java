@@ -68,6 +68,21 @@ public class AddressBook {
     }
 
 
+    public long countByCity(String city) {
+        // UC8: Count by city
+        return contacts.stream().filter(p -> p.getAddress().getCity().equalsIgnoreCase(city)).count();
+    }
+
+    public long countByState(String state) {
+        // UC8: Count by state
+        return contacts.stream().filter(p -> p.getAddress().getState().equalsIgnoreCase(state)).count();
+    }
+
+
+
+    public List<Person> getContacts() {
+        return contacts;
+    }
 
 
 }
