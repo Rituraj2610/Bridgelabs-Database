@@ -72,4 +72,17 @@ public class CRUD {
             System.out.println("Updated successfully!");
         }
     }
+
+    public void getEmployeeInDateRange(Connection con) throws SQLException {
+        String query = "SELECT * FROM employee_payroll WHERE joining_date BETWEEN ? AND ?";
+
+        PreparedStatement st = con.prepareStatement(query);
+        st.setDate(1, Date.valueOf("2020-01-01"));
+        st.setDate(2, Date.valueOf("2024-01-01"));
+
+        ResultSet set = st.executeQuery();
+        while(set.next()){
+            System.out.println("Id: " + set.getInt(1) + " Name: " + set.getString(2) + " Salary: " + set.getDouble(3) + " Joining Date: " + set.getDate(4));
+        }
+    }
 }

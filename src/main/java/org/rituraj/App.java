@@ -45,9 +45,15 @@ public class App {
             crud.readData(con);
 
             //UC3: Update salary for Terisa
-            // UPDATION;
+            //UC4: Used prepared statements
+            // UPDATE:
             Employee e = new Employee(5,"Terisa", 55000.00, Date.valueOf("2023-04-14"));
             crud.updateSalary(con, e);
+
+            //UC5: Retrieval of employee data who joined within a date range
+            crud.getEmployeeInDateRange(con);
+
+            //
 
             }catch(SQLException e){
             e.printStackTrace();
