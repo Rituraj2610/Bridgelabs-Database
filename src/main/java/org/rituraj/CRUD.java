@@ -62,6 +62,7 @@ public class CRUD {
     }
 
     public void updateSalary(Connection con, Employee e) throws SQLException {
+        //used prepared statement
         String sql = "UPDATE employee_payroll SET salary=30000.00 WHERE name=?";
         PreparedStatement preparedStatement = con.prepareStatement(sql);
         preparedStatement.setString(1, e.getName());
