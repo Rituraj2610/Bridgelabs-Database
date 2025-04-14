@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class AddressBook {
     private String name;
 
-    //UC4: Multiple Contact List
+    //UC5: Multiple Contact List
     private List<Person> contacts = new ArrayList<>();
 
     public AddressBook(String name) {
@@ -25,7 +25,7 @@ public class AddressBook {
     }
 
     public boolean addPerson(Person p) {
-        // UC6: Check for duplicate person in AddressBook
+        // UC7: Check for duplicate person in AddressBook
         if (contacts.contains(p)) {
             return false;
         }
@@ -54,53 +54,6 @@ public class AddressBook {
         System.out.println("Person not found.");
     }
 
-    public List<Person> searchByCity(String city) {
-        // UC7: Search person by city
-        return contacts.stream().filter(p -> p.getAddress().getCity().equalsIgnoreCase(city)).collect(Collectors.toList());
-    }
-
-    public List<Person> searchByState(String state) {
-        // UC7: Search person by state
-        return contacts.stream().filter(p -> p.getAddress().getState().equalsIgnoreCase(state)).collect(Collectors.toList());
-    }
-
-    public long countByCity(String city) {
-        // UC8: Count by city
-        return contacts.stream().filter(p -> p.getAddress().getCity().equalsIgnoreCase(city)).count();
-    }
-
-    public long countByState(String state) {
-        // UC8: Count by state
-        return contacts.stream().filter(p -> p.getAddress().getState().equalsIgnoreCase(state)).count();
-    }
-
-    public void sortByName() {
-        // UC9: Sort by name using lambda
-        contacts.sort(Comparator.comparing(Person::getFirstName));
-    }
-
-    public void sortByCity() {
-        // UC10: Sort by city
-        contacts.sort(Comparator.comparing(p -> p.getAddress().getCity()));
-    }
-
-    public void sortByState() {
-        // UC10: Sort by state
-        contacts.sort(Comparator.comparing(p -> p.getAddress().getState()));
-    }
-
-    public void sortByZip() {
-        // UC10: Sort by zip
-        contacts.sort(Comparator.comparing(p -> p.getAddress().getZip()));
-    }
-
-    public void printContacts() {
-        contacts.forEach(System.out::println);
-    }
-
-    public List<Person> getContacts() {
-        return contacts;
-    }
 
 
 }

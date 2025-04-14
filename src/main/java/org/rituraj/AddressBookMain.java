@@ -45,12 +45,6 @@ public class AddressBookMain {
                 case 2 -> addContact();
                 case 3 -> editContact();
                 case 4 -> deleteContact();
-                case 5 -> printContacts();
-                case 6 -> searchByCity();
-                case 7 -> searchByState();
-                case 8 -> countByCityState();
-                case 9 -> sortByName();
-                case 10 -> sortByOther();
                 case 0 -> {
                     System.out.println("Exiting...");
                     return;
@@ -132,61 +126,5 @@ public class AddressBookMain {
         }
     }
 
-    private void printContacts() {
-        for (String bookName : bookMap.keySet()) {
-            System.out.println("\n--- " + bookName + " ---");
-            bookMap.get(bookName).printContacts();
-        }
-    }
-
-    private void searchByCity() {
-        System.out.print("City: ");
-        String city = sc.nextLine();
-        bookMap.values().forEach(book -> {
-            List<Person> list = book.searchByCity(city);
-            if (!list.isEmpty()) {
-                System.out.println("In book: " + book);
-                list.forEach(System.out::println);
-            }
-        });
-    }
-
-    private void searchByState() {
-        System.out.print("State: ");
-        String state = sc.nextLine();
-        bookMap.values().forEach(book -> {
-            List<Person> list = book.searchByState(state);
-            if (!list.isEmpty()) {
-                System.out.println("In book: " + book);
-                list.forEach(System.out::println);
-            }
-        });
-    }
-
-    private void countByCityState() {
-        System.out.print("City or State: ");
-        String val = sc.nextLine();
-        long count = bookMap.values().stream()
-                .mapToLong(book -> book.countByCity(val) + book.countByState(val))
-                .sum();
-        System.out.println("Count: " + count);
-    }
-
-    private void sortByName() {
-        bookMap.values().forEach(AddressBook::sortByName);
-        System.out.println("Sorted by name.");
-    }
-
-    private void sortByOther() {
-        System.out.println("1. City\n2. State\n3. Zip");
-        int ch = Integer.parseInt(sc.nextLine());
-        for (AddressBook book : bookMap.values()) {
-            switch (ch) {
-                case 1 -> book.sortByCity();
-                case 2 -> book.sortByState();
-                case 3 -> book.sortByZip();
-            }
-        }
-    }
 
 }
