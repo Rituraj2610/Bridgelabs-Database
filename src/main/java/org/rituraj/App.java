@@ -57,6 +57,12 @@ public class App {
             //UC6: Database Functions
             crud.databaseFunctions(con);
 
+            //UC8, UC9, UC10, UC11
+//            crud.createTablePayrollDetails(con);
+            crud.insertDataPayrollDetails(con);
+
+
+
             }catch(SQLException e){
             e.printStackTrace();
         }

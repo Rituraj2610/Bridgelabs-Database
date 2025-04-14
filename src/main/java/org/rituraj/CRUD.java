@@ -104,4 +104,49 @@ public class CRUD {
         }
 
     }
+
+    public void createTablePayrollDetails(Connection con) throws SQLException {
+        String str = "CREATE TABLE payroll_details (\n" +
+                "    id INT AUTO_INCREMENT PRIMARY KEY,\n" +
+                "    employee_name VARCHAR(50),  \n" +
+                "    salary DOUBLE(10, 2),\n" +
+                "    deduction DOUBLE(10, 2) GENERATED ALWAYS AS (salary * 0.2),\n" +
+                "    taxable_pay DOUBLE(10, 2) GENERATED ALWAYS AS (salary - salary * 0.2),\n" +
+                "    tax DOUBLE(10, 2) GENERATED ALWAYS AS ((salary - salary * 0.2) * 0.1),\n" +
+                "    net_pay DOUBLE(10, 2) GENERATED ALWAYS AS (salary - ((salary - salary * 0.2) * 0.1))\n" +
+                ");\n";
+
+        Statement st = con.createStatement();
+        st.executeUpdate(str);
+    }
+
+    public void insertDataPayrollDetails(Connection con) throws SQLException {
+        con.setAutoCommit(false);
+        String sql = "INSERT INTO employee_payroll (name, salary, joining_date, gender) VALUES (?, ?, ?, ?)";
+        PreparedStatement preparedStatement = con.prepareStatement(sql);
+
+        preparedStatement.setString(1, "John Miller");
+        preparedStatement.setDouble(2, 62000.00);
+        preparedStatement.setDate(3, Date.valueOf("2022-12-25"));
+        preparedStatement.setString(4, "M");
+
+        int i = preparedStatement.executeUpdate();
+
+        if(i>0){
+            sql = "INSERT INTO payroll_details (employee_name, salary) VALUES (?, ?)";
+            preparedStatement = con.prepareStatement(sql);
+
+            preparedStatement.setString(1, "John Miller");
+            preparedStatement.setDouble(2, 62000.00);
+            int j = preparedStatement.executeUpdate();
+            if(j > 0){
+                con.commit();
+            }else{
+                con.rollback();
+            }
+        }else{
+            con.rollback();
+        }
+
+    }
 }
