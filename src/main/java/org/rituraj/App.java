@@ -1,10 +1,11 @@
 package org.rituraj;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.Enumeration;
 
-public class App 
-{
+public class App {
+
     public static void main( String[] args )  {
 
         // UC1: Loading the driver and setting up the connection
@@ -28,6 +29,21 @@ public class App
         try{
             con = DriverManager.getConnection(url, user, pswd);
             System.out.println("Connection success");
+
+            CRUD crud = new CRUD();
+
+            // CREATING THE TABLE
+//            crud.createTable(con);
+
+            // POPULATING THE DATA
+//            crud.insertData(con);
+
+
+            //UC2: Retrieve data from table as list
+            // READING DATA
+            System.out.println("Readind Data: ");
+            crud.readData(con);
+
             }catch(SQLException e){
             e.printStackTrace();
         }
