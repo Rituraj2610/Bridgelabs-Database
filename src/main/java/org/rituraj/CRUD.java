@@ -5,172 +5,192 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CRUD {
+    private final Connection con;
 
-    public void createTable(Connection con) throws SQLException {
-        String sql = "CREATE TABLE employee_payroll (id INT AUTO_INCREMENT, name VARCHAR(50), salary DOUBLE(10, 2), joining_date DATE, PRIMARY KEY (id))";
-        Statement st = con.createStatement();
-        int i = st.executeUpdate(sql);
-        System.out.println("Table created successfully!");
+    public CRUD(Connection con) {
+        this.con = con;
     }
 
-    public void readData(Connection con) throws SQLException {
-        List<Employee> list = new ArrayList<>();
-        String sql = "SELECT * FROM employee_payroll";
-        Statement st = con.createStatement();
-        ResultSet set =  st.executeQuery(sql);
-        while(set.next()){
-            Employee employee = new Employee(set.getInt(1), set.getString(2), set.getDouble(3), set.getDate(4));
-            list.add(employee);
-        }
+    // UC1: Load all persons from DB
+    public List<Person> loadAllContacts() {
+        List<Person> people = new ArrayList<>();
+        String query = "SELECT p.id, p.fname, p.lname, \n" +
+                "                   a.address_id, a.street, a.city, a.state, a.zip,\n" +
+                "                   e.email_add, ph.phone_number, pt.value\n" +
+                "            FROM person p\n" +
+                "            JOIN person_address pa ON p.id = pa.person_id\n" +
+                "            JOIN address a ON a.address_id = pa.address_id\n" +
+                "            JOIN email e ON p.id = e.person_id\n" +
+                "            JOIN phone ph ON p.id = ph.person_id\n" +
+                "            JOIN person_type pt ON p.id = pt.person_id";
+        try (PreparedStatement stmt = con.prepareStatement(query)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Address addr = new Address(
+                        rs.getInt("address_id"),
+                        rs.getString("street"),
+                        rs.getString("city"),
+                        rs.getString("state"),
+                        rs.getString("zip")
+                );
 
-        for(Employee e : list){
-            System.out.println(e);
-        }
-
-    }
-
-    public void insertData(Connection con) throws SQLException {
-        String sql = "INSERT INTO employee_payroll (name, salary, joining_date) VALUES (?, ?, ?)";
-        PreparedStatement preparedStatement = con.prepareStatement(sql);
-
-        // First record
-        preparedStatement.setString(1, "Alice Johnson");
-        preparedStatement.setDouble(2, 75000.00);
-        preparedStatement.setDate(3, Date.valueOf("2021-03-15"));
-        preparedStatement.addBatch();
-
-        // Second record
-        preparedStatement.setString(1, "Bob Smith");
-        preparedStatement.setDouble(2, 56000.50);
-        preparedStatement.setDate(3, Date.valueOf("2020-07-01"));
-        preparedStatement.addBatch();
-
-        // Third record
-        preparedStatement.setString(1, "Charlie Brown");
-        preparedStatement.setDouble(2, 98000.00);
-        preparedStatement.setDate(3, Date.valueOf("2023-01-12"));
-        preparedStatement.addBatch();
-
-        // Fourth record
-        preparedStatement.setString(1, "Diana Rose");
-        preparedStatement.setDouble(2, 63000.75);
-        preparedStatement.setDate(3, Date.valueOf("2019-11-25"));
-        preparedStatement.addBatch();
-
-        int[] results = preparedStatement.executeBatch();
-        System.out.println("Rows inserted: " + results.length);
-    }
-
-    public void updateSalary(Connection con, Employee e) throws SQLException {
-        //used prepared statement
-        String sql = "UPDATE employee_payroll SET salary=30000.00 WHERE name=?";
-        PreparedStatement preparedStatement = con.prepareStatement(sql);
-        preparedStatement.setString(1, e.getName());
-
-        int i = preparedStatement.executeUpdate();
-        if(i > 0){
-            System.out.println("Updated successfully!");
-        }
-    }
-
-    public void getEmployeeInDateRange(Connection con) throws SQLException {
-        String query = "SELECT * FROM employee_payroll WHERE joining_date BETWEEN ? AND ?";
-
-        PreparedStatement st = con.prepareStatement(query);
-        st.setDate(1, Date.valueOf("2020-01-01"));
-        st.setDate(2, Date.valueOf("2024-01-01"));
-
-        ResultSet set = st.executeQuery();
-        while(set.next()){
-            System.out.println("Id: " + set.getInt(1) + " Name: " + set.getString(2) + " Salary: " + set.getDouble(3) + " Joining Date: " + set.getDate(4));
-        }
-    }
-
-    public void databaseFunctions(Connection con) throws SQLException {
-        //SUM
-        String sql = "SELECT SUM(salary) FROM employee_payroll WHERE gender='F' GROUP BY gender";
-        Statement st = con.createStatement();
-        ResultSet set = st.executeQuery(sql);
-        if(set.next()){
-            System.out.println(set.getInt(1));
-        }
-
-        //count
-        sql = "SELECT Gender, COUNT(*) FROM employee_payroll GROUP BY gender";
-        set = st.executeQuery(sql);
-        while(set.next()){
-            System.out.print(set.getString(1) + " ");
-            System.out.println(set.getInt(2));
-        }
-
-    }
-
-    public void createTablePayrollDetails(Connection con) throws SQLException {
-        String str = "CREATE TABLE payroll_details (\n" +
-                "    id INT AUTO_INCREMENT PRIMARY KEY,\n" +
-                "    employee_name VARCHAR(50),  \n" +
-                "    salary DOUBLE(10, 2),\n" +
-                "    deduction DOUBLE(10, 2) GENERATED ALWAYS AS (salary * 0.2),\n" +
-                "    taxable_pay DOUBLE(10, 2) GENERATED ALWAYS AS (salary - salary * 0.2),\n" +
-                "    tax DOUBLE(10, 2) GENERATED ALWAYS AS ((salary - salary * 0.2) * 0.1),\n" +
-                "    net_pay DOUBLE(10, 2) GENERATED ALWAYS AS (salary - ((salary - salary * 0.2) * 0.1))\n" +
-                ");\n";
-
-        Statement st = con.createStatement();
-        st.executeUpdate(str);
-    }
-
-    public void insertDataPayrollDetails(Connection con) throws SQLException {
-        con.setAutoCommit(false);
-        String sql = "INSERT INTO employee_payroll (name, salary, joining_date, gender) VALUES (?, ?, ?, ?)";
-        PreparedStatement preparedStatement = con.prepareStatement(sql);
-
-        preparedStatement.setString(1, "John Miller");
-        preparedStatement.setDouble(2, 62000.00);
-        preparedStatement.setDate(3, Date.valueOf("2022-12-25"));
-        preparedStatement.setString(4, "M");
-
-        int i = preparedStatement.executeUpdate();
-
-        if(i>0){
-            sql = "INSERT INTO payroll_details (employee_name, salary) VALUES (?, ?)";
-            preparedStatement = con.prepareStatement(sql);
-
-            preparedStatement.setString(1, "John Miller");
-            preparedStatement.setDouble(2, 62000.00);
-            int j = preparedStatement.executeUpdate();
-            if(j > 0){
-                con.commit();
-            }else{
-                con.rollback();
+                Person p = new Person(
+                        rs.getInt("id"),
+                        rs.getString("fname"),
+                        rs.getString("lname"),
+                        addr,
+                        rs.getString("email_add"),
+                        rs.getString("phone_number"),
+                        rs.getString("value")
+                );
+                people.add(p);
             }
-        }else{
-            con.rollback();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
+        return people;
     }
 
-    public void deleteEmployee(Connection con, int id) throws SQLException {
-        String query = "UPDATE employee_payroll set is_active=? where id=?";
-        PreparedStatement preparedStatement = con.prepareStatement(query);
-        preparedStatement.setInt(2, id);
-        preparedStatement.setBoolean(1, false);
-        preparedStatement.executeUpdate();
+    // Insert a new person into DB
+    public void insertPerson(Person p) {
+        try {
+            con.setAutoCommit(false); // transaction start
+
+            // Insert Address
+            String addrSql = "INSERT INTO address (street, city, state, zip) VALUES (?, ?, ?, ?)";
+            PreparedStatement addrStmt = con.prepareStatement(addrSql, Statement.RETURN_GENERATED_KEYS);
+            addrStmt.setString(1, p.getAddress().getStreet());
+            addrStmt.setString(2, p.getAddress().getCity());
+            addrStmt.setString(3, p.getAddress().getState());
+            addrStmt.setString(4, p.getAddress().getZip());
+            addrStmt.executeUpdate();
+            ResultSet addrRs = addrStmt.getGeneratedKeys();
+            addrRs.next();
+            int addressId = addrRs.getInt(1);
+
+            // Insert Person
+            String personSql = "INSERT INTO person (fname, lname) VALUES (?, ?)";
+            PreparedStatement personStmt = con.prepareStatement(personSql, Statement.RETURN_GENERATED_KEYS);
+            personStmt.setString(1, p.getFirstName());
+            personStmt.setString(2, p.getLastName());
+            personStmt.executeUpdate();
+            ResultSet personRs = personStmt.getGeneratedKeys();
+            personRs.next();
+            int personId = personRs.getInt(1);
+
+            // Link person_address
+            String linkSql = "INSERT INTO person_address (person_id, address_id) VALUES (?, ?)";
+            PreparedStatement linkStmt = con.prepareStatement(linkSql);
+            linkStmt.setInt(1, personId);
+            linkStmt.setInt(2, addressId);
+            linkStmt.executeUpdate();
+
+            // Insert email
+            String emailSql = "INSERT INTO email (person_id, email_add) VALUES (?, ?)";
+            PreparedStatement emailStmt = con.prepareStatement(emailSql);
+            emailStmt.setInt(1, personId);
+            emailStmt.setString(2, p.getEmail());
+            emailStmt.executeUpdate();
+
+            // Insert phone
+            String phoneSql = "INSERT INTO phone (person_id, phone_number) VALUES (?, ?)";
+            PreparedStatement phoneStmt = con.prepareStatement(phoneSql);
+            phoneStmt.setInt(1, personId);
+            phoneStmt.setString(2, p.getPhone());
+            phoneStmt.executeUpdate();
+
+            // Insert type
+            String typeSql = "INSERT INTO person_type (person_id, value) VALUES (?, ?)";
+            PreparedStatement typeStmt = con.prepareStatement(typeSql);
+            typeStmt.setInt(1, personId);
+            typeStmt.setString(2, p.getType());
+            typeStmt.executeUpdate();
+
+            con.commit();
+        } catch (SQLException e) {
+            try {
+                con.rollback(); // rollback if anything fails
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
     }
 
-    public void readDataUpdated(Connection con) throws SQLException {
-        List<Employee> list = new ArrayList<>();
-        String sql = "SELECT * FROM employee_payroll where is_active=true";
-        Statement st = con.createStatement();
-        ResultSet set =  st.executeQuery(sql);
-        while(set.next()){
-            Employee employee = new Employee(set.getInt(1), set.getString(2), set.getDouble(3), set.getDate(4));
-            list.add(employee);
-        }
+    // Update email, phone, and address by person ID
+    public void updatePerson(int personId, String newEmail, String newPhone, Address newAddress) {
+        try {
+            con.setAutoCommit(false);
 
-        for(Employee e : list){
-            System.out.println(e);
-        }
+            // Update email
+            String emailSql = "UPDATE email SET email_add = ? WHERE person_id = ?";
+            try (PreparedStatement stmt = con.prepareStatement(emailSql)) {
+                stmt.setString(1, newEmail);
+                stmt.setInt(2, personId);
+                stmt.executeUpdate();
+            }
 
+            // Update phone
+            String phoneSql = "UPDATE phone SET phone_number = ? WHERE person_id = ?";
+            try (PreparedStatement stmt = con.prepareStatement(phoneSql)) {
+                stmt.setString(1, newPhone);
+                stmt.setInt(2, personId);
+                stmt.executeUpdate();
+            }
+
+            // Update address
+            String addrSql = "UPDATE address a\n" +
+                    "                JOIN person_address pa ON a.address_id = pa.address_id\n" +
+                    "                SET a.street = ?, a.city = ?, a.state = ?, a.zip = ?\n" +
+                    "                WHERE pa.person_id = ?";
+            try (PreparedStatement stmt = con.prepareStatement(addrSql)) {
+                stmt.setString(1, newAddress.getStreet());
+                stmt.setString(2, newAddress.getCity());
+                stmt.setString(3, newAddress.getState());
+                stmt.setString(4, newAddress.getZip());
+                stmt.setInt(5, personId);
+                stmt.executeUpdate();
+            }
+
+            con.commit();
+        } catch (SQLException e) {
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
     }
-}
+
+    // Delete person and all references
+    public void deletePerson(int personId) {
+        try {
+            con.setAutoCommit(false);
+
+            // Delete email, phone, type first
+            String[] deleteTables = {"email", "phone", "person_type", "person_address"};
+            for (String table : deleteTables) {
+                try (PreparedStatement stmt = con.prepareStatement("DELETE FROM " + table + " WHERE person_id = ?")) {
+                    stmt.setInt(1, personId);
+                    stmt.executeUpdate();
+                }
+            }
+
+            // Delete person
+            try (PreparedStatement stmt = con.prepareStatement("DELETE FROM person WHERE id = ?")) {
+                stmt.setInt(1, personId);
+                stmt.executeUpdate();
+            }
+
+            con.commit();
+        } catch (SQLException e) {
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+}}

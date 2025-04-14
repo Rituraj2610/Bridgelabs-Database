@@ -22,6 +22,14 @@ public class AddressBook {
         this.contacts = new ArrayList<>();
     }
 
+    public boolean addPerson(Person p) {
+        // UC6: Check for duplicate person in AddressBook
+        if (contacts.contains(p)) {
+            return false;
+        }
+        contacts.add(p);
+        return true;
+    }
 
 
 }

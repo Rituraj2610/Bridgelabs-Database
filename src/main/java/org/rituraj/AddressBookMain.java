@@ -41,6 +41,7 @@ public class AddressBookMain {
 
             switch (choice) {
                 case 1 -> addAddressBook();
+                case 2 -> addContact();
                 case 0 -> {
                     System.out.println("Exiting...");
                     return;
@@ -55,6 +56,44 @@ public class AddressBookMain {
         String name = sc.nextLine();
         bookMap.putIfAbsent(name, new AddressBook(name));
         System.out.println("Created.");
+    }
+
+    private void addContact() {
+        System.out.print("Enter AddressBook name: ");
+        String name = sc.nextLine();
+        AddressBook book = bookMap.get(name);
+        if (book == null) {
+            System.out.println("AddressBook not found.");
+            return;
+        }
+
+        System.out.print("First name: ");
+        String fname = sc.nextLine();
+        System.out.print("Last name: ");
+        String lname = sc.nextLine();
+        System.out.print("Street: ");
+        String street = sc.nextLine();
+        System.out.print("City: ");
+        String city = sc.nextLine();
+        System.out.print("State: ");
+        String state = sc.nextLine();
+        System.out.print("Zip: ");
+        String zip = sc.nextLine();
+        System.out.print("Email: ");
+        String email = sc.nextLine();
+        System.out.print("Phone: ");
+        String phone = sc.nextLine();
+        System.out.print("Type (family/friends): ");
+        String type = sc.nextLine();
+
+        Address addr = new Address(street, city, state, zip);
+        Person p = new Person(fname, lname, addr, email, phone, type);
+
+        if (book.addPerson(p)) {
+            System.out.println("Contact added.");
+        } else {
+            System.out.println("Duplicate contact!");
+        }
     }
 
 }
