@@ -53,7 +53,8 @@ public class App {
             //UC5: Retrieval of employee data who joined within a date range
             crud.getEmployeeInDateRange(con);
 
-            //
+            //UC6: Database Functions
+            crud.databaseFunctions(con);
 
             }catch(SQLException e){
             e.printStackTrace();

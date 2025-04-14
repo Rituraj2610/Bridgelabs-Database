@@ -85,4 +85,23 @@ public class CRUD {
             System.out.println("Id: " + set.getInt(1) + " Name: " + set.getString(2) + " Salary: " + set.getDouble(3) + " Joining Date: " + set.getDate(4));
         }
     }
+
+    public void databaseFunctions(Connection con) throws SQLException {
+        //SUM
+        String sql = "SELECT SUM(salary) FROM employee_payroll WHERE gender='F' GROUP BY gender";
+        Statement st = con.createStatement();
+        ResultSet set = st.executeQuery(sql);
+        if(set.next()){
+            System.out.println(set.getInt(1));
+        }
+
+        //count
+        sql = "SELECT Gender, COUNT(*) FROM employee_payroll GROUP BY gender";
+        set = st.executeQuery(sql);
+        while(set.next()){
+            System.out.print(set.getString(1) + " ");
+            System.out.println(set.getInt(2));
+        }
+
+    }
 }
