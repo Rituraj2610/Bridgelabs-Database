@@ -25,5 +25,13 @@ public class Person {
         this.phone = phone;
         this.type = type;
     }
+
+    public Person(String firstName, String lastName, String email, String phone, String type) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.type = type;
+    }
 }
 

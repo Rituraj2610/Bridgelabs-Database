@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.Scanner;
 
@@ -14,12 +15,16 @@ public class AddressBookMain {
     private Scanner sc;
     private CRUD crud;
     private FileIOService fileService;
+    private DatabaseService dbService;
+    private Connection con;
 
     public AddressBookMain(Connection con) {
         this.bookMap = new HashMap<>();
         this.sc = new Scanner(System.in);
         this.crud = new CRUD(con);
         this.fileService = new FileIOService();
+        this.dbService = new DatabaseService();
+        this.con = con;
 
 
         AddressBook dbBook = new AddressBook("Default");
@@ -45,6 +50,10 @@ public class AddressBookMain {
                     "13. Write to CSV File\n" +
                     "14. Read from CSV File\n" +
                     "15. Write to txt File\n" +
+                    "16. Get Contacts Added in a Period\n" +
+                    "17.Update DB Contact\n" +
+                    "18. Add new person to db\n" +
+                    "19. Retrieve all person from\n" +
                     "                0. Exit");
 
             System.out.print("Enter choice: ");
@@ -66,7 +75,48 @@ public class AddressBookMain {
                 case 13 -> exportAllPersonsToCSV();
                 case 14 -> exportAllPersonsToJSON();
                 case 15 -> writeAllPersonsToJSON();
+                case 16 -> {
+                    // UC: Get contacts added in a period
+                    System.out.print("From Date (yyyy-mm-dd): ");
+                    LocalDate from = LocalDate.parse(sc.nextLine());
+                    System.out.print("To Date (yyyy-mm-dd): ");
+                    LocalDate to = LocalDate.parse(sc.nextLine());
+                    List<Person> list = dbService.getPersonsAddedInPeriod(con, from, to);
+                    list.forEach(System.out::println);
+                }
+                case 17 -> {
+                    // UC: Update Person Information in DB
+                    System.out.print("Enter first name: ");
+                    String fname = sc.nextLine();
+                    System.out.print("New email: ");
+                    String newEmail = sc.nextLine();
+                    System.out.print("New phone: ");
+                    String newPhone = sc.nextLine();
+                    dbService.updatePersonInDB(con, fname, newEmail, newPhone);
+                }
+                case 18 -> {
+                    // UC: Add a new person to the database
+                    System.out.print("Enter first name: ");
+                    String firstName = sc.nextLine();
+                    System.out.print("Enter last name: ");
+                    String lastName = sc.nextLine();
+                    System.out.print("Enter email: ");
+                    String email = sc.nextLine();
+                    System.out.print("Enter phone: ");
+                    String phone = sc.nextLine();
+                    System.out.print("Enter street address: ");
+                    String address = sc.nextLine();
+                    System.out.print("Enter person type: ");
+                    String type = sc.nextLine();
 
+                    Person person = new Person(firstName, lastName, address, type, phone);
+                    dbService.addPersonToDB(con, person);
+                }
+                case 19 -> {
+                    // UC: Retrieve all persons from the database
+                    List<Person> persons = dbService.getAllPersonsFromDB(con);
+                    persons.forEach(System.out::println);
+                }
 
                 case 0 -> {
                     System.out.println("Exiting...");
