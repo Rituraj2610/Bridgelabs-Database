@@ -49,6 +49,8 @@ public class AddressBookMain {
                 case 6 -> searchByCity();
                 case 7 -> searchByState();
                 case 8 -> countByCityState();
+                case 9 -> sortByName();
+                case 10 -> sortByOther();
                 case 0 -> {
                     System.out.println("Exiting...");
                     return;
@@ -168,6 +170,23 @@ public class AddressBookMain {
                 .mapToLong(book -> book.countByCity(val) + book.countByState(val))
                 .sum();
         System.out.println("Count: " + count);
+    }
+
+    private void sortByName() {
+        bookMap.values().forEach(AddressBook::sortByName);
+        System.out.println("Sorted by name.");
+    }
+
+    private void sortByOther() {
+        System.out.println("1. City\n2. State\n3. Zip");
+        int ch = Integer.parseInt(sc.nextLine());
+        for (AddressBook book : bookMap.values()) {
+            switch (ch) {
+                case 1 -> book.sortByCity();
+                case 2 -> book.sortByState();
+                case 3 -> book.sortByZip();
+            }
+        }
     }
 
 }

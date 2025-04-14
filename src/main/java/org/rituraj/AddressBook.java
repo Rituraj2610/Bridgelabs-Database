@@ -67,6 +67,25 @@ public class AddressBook {
         return contacts.stream().filter(p -> p.getAddress().getState().equalsIgnoreCase(state)).collect(Collectors.toList());
     }
 
+    public void sortByName() {
+        // UC9: Sort by name using lambda
+        contacts.sort(Comparator.comparing(Person::getFirstName));
+    }
+
+    public void sortByCity() {
+        // UC10: Sort by city
+        contacts.sort(Comparator.comparing(p -> p.getAddress().getCity()));
+    }
+
+    public void sortByState() {
+        // UC10: Sort by state
+        contacts.sort(Comparator.comparing(p -> p.getAddress().getState()));
+    }
+
+    public void sortByZip() {
+        // UC10: Sort by zip
+        contacts.sort(Comparator.comparing(p -> p.getAddress().getZip()));
+    }
 
     public long countByCity(String city) {
         // UC8: Count by city
