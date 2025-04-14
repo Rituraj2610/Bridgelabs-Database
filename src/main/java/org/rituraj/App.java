@@ -36,6 +36,7 @@ public class App {
 //            crud.createTable(con);
 
             // POPULATING THE DATA
+//            UC7: Adding new employee
 //            crud.insertData(con);
 
 
