@@ -97,8 +97,6 @@ public class AddressBook {
         return contacts.stream().filter(p -> p.getAddress().getState().equalsIgnoreCase(state)).count();
     }
 
-
-
     public List<Person> getContacts() {
         return contacts;
     }

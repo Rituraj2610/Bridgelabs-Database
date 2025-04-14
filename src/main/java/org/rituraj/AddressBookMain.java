@@ -1,5 +1,8 @@
 package org.rituraj;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.util.*;
 import java.util.Scanner;
@@ -10,11 +13,13 @@ public class AddressBookMain {
     private Map<String, AddressBook> bookMap;
     private Scanner sc;
     private CRUD crud;
+    private FileIOService fileService;
 
     public AddressBookMain(Connection con) {
         this.bookMap = new HashMap<>();
         this.sc = new Scanner(System.in);
         this.crud = new CRUD(con);
+        this.fileService = new FileIOService();
 
 
         AddressBook dbBook = new AddressBook("Default");
@@ -35,6 +40,11 @@ public class AddressBookMain {
                     "                8. Count by City/State\n" +
                     "                9. Sort by Name\n" +
                     "                10. Sort by City/State/Zip\n" +
+                    "11. Write to JSON File\n" +
+                    "12. Read from JSON File\n" +
+                    "13. Write to CSV File\n" +
+                    "14. Read from CSV File\n" +
+                    "15. Write to txt File\n" +
                     "                0. Exit");
 
             System.out.print("Enter choice: ");
@@ -51,6 +61,13 @@ public class AddressBookMain {
                 case 8 -> countByCityState();
                 case 9 -> sortByName();
                 case 10 -> sortByOther();
+                case 11 -> writeAllPersonsToJSON();
+                case 12 -> readAllPersonsFromJSON();
+                case 13 -> exportAllPersonsToCSV();
+                case 14 -> exportAllPersonsToJSON();
+                case 15 -> writeAllPersonsToJSON();
+
+
                 case 0 -> {
                     System.out.println("Exiting...");
                     return;
@@ -187,6 +204,53 @@ public class AddressBookMain {
                 case 3 -> book.sortByZip();
             }
         }
+    }
+
+    private void writeAllPersonsToJSON() {
+        List<Person> allPersons = new ArrayList<>();
+        for (AddressBook book : bookMap.values()) {
+            allPersons.addAll(book.getContacts());
+        }
+        fileService.writePersonsToJSON(allPersons);
+        System.out.println("All contacts written to JSON file.");
+    }
+
+    private void readAllPersonsFromJSON() {
+        List<Person> persons = fileService.readPersonsFromJSON();
+        AddressBook fileBook = new AddressBook("FromJSON");
+        for (Person p : persons) fileBook.addPerson(p);
+        bookMap.put("FromJSON", fileBook);
+        System.out.println("Contacts read from JSON file into AddressBook 'FromJSON'.");
+    }
+
+    // Export all contacts to CSV file
+    private void exportAllPersonsToCSV() {
+        List<Person> allPersons = new ArrayList<>();
+        for (AddressBook book : bookMap.values()) {
+            allPersons.addAll(book.getContacts());
+        }
+        fileService.writePersonsToCSV(allPersons);
+        System.out.println("All contacts exported to CSV file.");
+    }
+
+    // Export all contacts to JSON file (alternative to case 11)
+    private void exportAllPersonsToJSON() {
+        List<Person> allPersons = new ArrayList<>();
+        for (AddressBook book : bookMap.values()) {
+            allPersons.addAll(book.getContacts());
+        }
+        fileService.writePersonsToJSON(allPersons);
+        System.out.println("All contacts exported to JSON file.");
+    }
+
+    // UC: Ability to Write the Address Book with Persons Person into a File using File IO
+    public void writePersonsToTextFile(List<Person> Persons) {
+        List<Person> allPersons = new ArrayList<>();
+        for (AddressBook book : bookMap.values()) {
+            allPersons.addAll(book.getContacts());
+        }
+        fileService.writePersonsToTextFile(allPersons);
+        System.out.println("All contacts exported to txt file.");
     }
 
 
