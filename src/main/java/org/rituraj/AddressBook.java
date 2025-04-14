@@ -31,6 +31,11 @@ public class AddressBook {
         return true;
     }
 
+    public boolean deletePerson(String firstName) {
+        // UC3: Delete person by name
+        return contacts.removeIf(p -> p.getFirstName().equalsIgnoreCase(firstName));
+    }
+
     public void editPerson(String firstName, Scanner sc) {
         // UC2: Edit person by name
         for (Person p : contacts) {

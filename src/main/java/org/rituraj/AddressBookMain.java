@@ -43,6 +43,7 @@ public class AddressBookMain {
                 case 1 -> addAddressBook();
                 case 2 -> addContact();
                 case 3 -> editContact();
+                case 4 -> deleteContact();
                 case 0 -> {
                     System.out.println("Exiting...");
                     return;
@@ -52,6 +53,7 @@ public class AddressBookMain {
         }
     }
 
+    //UC1
     private void addAddressBook() {
         System.out.print("Enter AddressBook name: ");
         String name = sc.nextLine();
@@ -59,6 +61,7 @@ public class AddressBookMain {
         System.out.println("Created.");
     }
 
+    //UC2
     private void addContact() {
         System.out.print("Enter AddressBook name: ");
         String name = sc.nextLine();
@@ -97,6 +100,7 @@ public class AddressBookMain {
         }
     }
 
+    //UC3
     private void editContact() {
         System.out.print("Enter AddressBook name: ");
         String name = sc.nextLine();
@@ -107,6 +111,19 @@ public class AddressBookMain {
         }
     }
 
+    private void deleteContact() {
+        System.out.print("Enter AddressBook name: ");
+        String name = sc.nextLine();
+        AddressBook book = bookMap.get(name);
+        if (book != null) {
+            System.out.print("Enter first name of person to delete: ");
+            if (book.deletePerson(sc.nextLine())) {
+                System.out.println("Deleted.");
+            } else {
+                System.out.println("Not found.");
+            }
+        }
+    }
 
 
 }
