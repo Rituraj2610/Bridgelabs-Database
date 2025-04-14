@@ -44,6 +44,11 @@ public class App {
             System.out.println("Readind Data: ");
             crud.readData(con);
 
+            //UC3: Update salary for Terisa
+            // UPDATION;
+            Employee e = new Employee(5,"Terisa", 55000.00, Date.valueOf("2023-04-14"));
+            crud.updateSalary(con, e);
+
             }catch(SQLException e){
             e.printStackTrace();
         }

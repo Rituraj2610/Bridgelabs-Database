@@ -60,4 +60,15 @@ public class CRUD {
         int[] results = preparedStatement.executeBatch();
         System.out.println("Rows inserted: " + results.length);
     }
+
+    public void updateSalary(Connection con, Employee e) throws SQLException {
+        String sql = "UPDATE employee_payroll SET salary=30000.00 WHERE name=?";
+        PreparedStatement preparedStatement = con.prepareStatement(sql);
+        preparedStatement.setString(1, e.getName());
+
+        int i = preparedStatement.executeUpdate();
+        if(i > 0){
+            System.out.println("Updated successfully!");
+        }
+    }
 }
