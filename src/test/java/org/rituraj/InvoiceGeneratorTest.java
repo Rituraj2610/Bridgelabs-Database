@@ -34,5 +34,21 @@ public class InvoiceGeneratorTest {
         InvoiceSummary actual = invoiceGenerator.generateInvoice(rides);
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void givenUserId_shouldReturnInvoiceSummary() {
+        RideRepository rideRepo = new RideRepository();
+        String userId = "user123";
+        Ride[] rides = {
+                new Ride(3.0, 10),
+                new Ride(1.0, 2)
+        };
+        rideRepo.addRides(userId, rides);
+
+        InvoiceGenerator invoiceGenerator = new InvoiceGenerator(rideRepo);
+        InvoiceSummary expected = new InvoiceSummary(2, 42.0); // 30 + 12
+        InvoiceSummary actual = invoiceGenerator.getInvoiceByUser(userId);
+        assertEquals(expected, actual);
+    }
 }
 
