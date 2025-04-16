@@ -16,7 +16,7 @@ import java.io.PrintWriter;
         urlPatterns = {"/LoginServlet"},
         initParams = {
                 @WebInitParam(name = "user", value = "abc"),
-                @WebInitParam(name = "password", value = "abc")
+                @WebInitParam(name = "password", value = "abc@123A")
         }
 )
 public class LoginServlet extends HttpServlet {
@@ -28,11 +28,18 @@ public class LoginServlet extends HttpServlet {
         String user = request.getParameter("user");
         String pwd = request.getParameter("pwd");
 
-        // Validate name format: Starts with capital, at least 3 characters
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
         if (!isValidName(user)) {
-            response.setContentType("text/html");
-            PrintWriter out = response.getWriter();
             out.println("<font color='red'>Invalid name format. Name must start with a capital letter and be at least 3 characters long.</font>");
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
+            rd.include(request, response);
+            return;
+        }
+
+        if (!isValidPassword(pwd)) {
+            out.println("<font color='red'>Invalid password. Must be at least 8 characters long, have 1 uppercase letter, 1 number, and exactly 1 special character.</font>");
             RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
             rd.include(request, response);
             return;
@@ -45,8 +52,6 @@ public class LoginServlet extends HttpServlet {
             request.setAttribute("user", user);
             request.getRequestDispatcher("LoginSuccess.jsp").forward(request, response);
         } else {
-            response.setContentType("text/html");
-            PrintWriter out = response.getWriter();
             out.println("<font color='red'>Either user name or password is wrong.</font>");
             RequestDispatcher rd = getServletContext().getRequestDispatcher("/login.html");
             rd.include(request, response);
@@ -55,5 +60,16 @@ public class LoginServlet extends HttpServlet {
 
     private boolean isValidName(String name) {
         return name != null && name.matches("^[A-Z][a-zA-Z]{2,}$");
+    }
+
+    private boolean isValidPassword(String password) {
+        if (password == null || password.length() < 8)
+            return false;
+
+        boolean hasUpperCase = password.matches(".*[A-Z].*");
+        boolean hasNumber = password.matches(".*[0-9].*");
+        int specialCharCount = password.replaceAll("[a-zA-Z0-9]", "").length();
+
+        return hasUpperCase && hasNumber && specialCharCount == 1;
     }
 }
